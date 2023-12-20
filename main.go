@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/samvimes01/go-bootdev-pokedexcli/internal/repl"
+	"github.com/samvimes01/go-bootdev-pokedexcli/repl"
 )
 
 func main() {
