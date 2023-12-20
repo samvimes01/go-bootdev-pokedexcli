@@ -17,7 +17,6 @@ func NewClient() Client {
 	return Client{httpClient: http.Client{Timeout: time.Minute}}
 }
 
-
 func buildUrl(path string, offset, limit int) string {
 	u, _ := url.Parse(endpoint + path)
 	query := url.Values{}

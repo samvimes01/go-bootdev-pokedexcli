@@ -16,7 +16,7 @@ func GetCmdFromPrompt(prompt string) ([]string, error) {
 }
 
 func GetOffsetFromUrl(uri *string) int {
-	if uri == nil && *uri == "" {
+	if uri == nil || *uri == "" {
 		return 0
 	}
 	u, err := url.Parse(*uri)

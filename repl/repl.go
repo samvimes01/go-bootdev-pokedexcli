@@ -4,13 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/samvimes01/go-bootdev-pokedexcli/internal/pokeapi"
+	"github.com/samvimes01/go-bootdev-pokedexcli/internal/pokecache"
 	"github.com/samvimes01/go-bootdev-pokedexcli/utils"
 )
 
 type replConfig struct {
 	PokeapiClient  pokeapi.Client
+	Cache  pokecache.Cache
 	NextOffset     int
 	PreviousOffset int
 	Limit          int
@@ -23,7 +26,7 @@ type cliCommand struct {
 }
 
 func StartRepl() {
-	cfg := replConfig{pokeapi.NewClient(), 0, 0, 20}
+	cfg := replConfig{pokeapi.NewClient(), pokecache.NewCache(5 * time.Minute), 0, 0, 20}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	// handle error
