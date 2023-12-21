@@ -13,7 +13,7 @@ import (
 
 type replConfig struct {
 	PokeapiClient  pokeapi.Client
-	Cache  pokecache.Cache
+	Cache  pokecache.Cache[any]
 	NextOffset     int
 	PreviousOffset int
 	Limit          int
@@ -22,7 +22,7 @@ type replConfig struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *replConfig) error
+	callback    func(cfg *replConfig, opts []string) error
 }
 
 func StartRepl() {
@@ -49,7 +49,7 @@ func StartRepl() {
 			fmt.Println("Invalid command")
 			continue
 		}
-		err = command.callback(&cfg)
+		err = command.callback(&cfg, cmd[1:])
 		if err != nil {
 			fmt.Println("Error: ", err)
 			continue
@@ -78,6 +78,11 @@ func getCommandsMap() map[string]cliCommand {
 			name:        "mapb",
 			description: "Displays the previous 20 locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore <areaName>",
+			description: "Displays a list of Pokémon that can be encountered in this area",
+			callback:    commandExplore,
 		},
 	}
 }

@@ -13,15 +13,18 @@ type area struct {
 }
 
 func getAreas(cfg *replConfig, offset int) error {
-	var areas pokeapi.LocationAreaResp
+	var areas pokeapi.LocationAreasResp
 	var err error
-	if cache, ok := cfg.Cache.Get(offset); ok {
-		areas = cache
+	url := cfg.PokeapiClient.BuildListUrl("location-area", offset, cfg.Limit)
+
+	if cache, ok := cfg.Cache.Get(url); ok {
+		areas = cache.(pokeapi.LocationAreasResp)
 	} else {
-		areas, err = cfg.PokeapiClient.GetLocationAreas(offset, cfg.Limit)
+		areas, err = cfg.PokeapiClient.GetLocationAreas(url)
 		if err != nil {
 			return err
 		}
+		cfg.Cache.Add(url, areas)
 	}
 
 	cfg.PreviousOffset = utils.GetOffsetFromUrl(areas.Previous)
@@ -34,7 +37,7 @@ func getAreas(cfg *replConfig, offset int) error {
 	return nil
 }
 
-func commandMap(cfg *replConfig) error {
+func commandMap(cfg *replConfig, opts []string) error {
 	err := getAreas(cfg, cfg.NextOffset)
 	if err != nil {
 		return err
@@ -42,7 +45,7 @@ func commandMap(cfg *replConfig) error {
 	return nil
 }
 
-func commandMapb(cfg *replConfig) error {
+func commandMapb(cfg *replConfig, opts []string) error {
 	if cfg.PreviousOffset == 0 && cfg.NextOffset == cfg.Limit {
 		return fmt.Errorf("no previous page")
 	}
