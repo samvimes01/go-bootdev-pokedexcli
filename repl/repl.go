@@ -8,12 +8,14 @@ import (
 
 	"github.com/samvimes01/go-bootdev-pokedexcli/internal/pokeapi"
 	"github.com/samvimes01/go-bootdev-pokedexcli/internal/pokecache"
+	"github.com/samvimes01/go-bootdev-pokedexcli/pokedex"
 	"github.com/samvimes01/go-bootdev-pokedexcli/utils"
 )
 
 type replConfig struct {
 	PokeapiClient  pokeapi.Client
-	Cache  pokecache.Cache[any]
+	Cache          pokecache.Cache[any]
+	Pokedex        map[string]pokedex.Pokemon
 	NextOffset     int
 	PreviousOffset int
 	Limit          int
@@ -26,7 +28,7 @@ type cliCommand struct {
 }
 
 func StartRepl() {
-	cfg := replConfig{pokeapi.NewClient(), pokecache.NewCache(5 * time.Minute), 0, 0, 20}
+	cfg := replConfig{pokeapi.NewClient(), pokecache.NewCache(5 * time.Minute), make(map[string]pokedex.Pokemon), 0, 0, 20}
 	scanner := bufio.NewScanner(os.Stdin)
 
 	// handle error
@@ -83,6 +85,11 @@ func getCommandsMap() map[string]cliCommand {
 			name:        "explore <areaName>",
 			description: "Displays a list of Pokémon that can be encountered in this area",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch <pokemonName>",
+			description: "Catch a pokemon",
+			callback:    commandCatch,
 		},
 	}
 }
